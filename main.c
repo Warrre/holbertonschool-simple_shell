@@ -1,83 +1,36 @@
-#include "shell.h"
+#include "simple_shell.h"
 
 /**
- * main - Point d’entrée de l'interpréteur de commande.
- *
- * Return: 0 en cas de succès.
+ * main - Point d'entrée du programme.
+ * @argc: Nombre d'arguments passés au programme.
+ * @argv: Tableau des arguments passés au programme.
+ * Return: 0 si succès, 1 si erreur.
  */
-int main(void)
+int main(int argc, char **argv)
 {
-    char *line = NULL;
-    size_t len = 0;
-    ssize_t nread;
-    pid_t pid;
-    int status;
+    char *line = NULL;         /* Ligne de commande de l'utilisateur */
+    char **args = NULL;        /* Tableau des arguments */
+    size_t len = 0;            /* Taille de la ligne de commande */
+    ssize_t nread;             /* Nombre d'octets lus */
+    int status = 0;            /* Statut de la commande */
 
+    /* Affichage du prompt et traitement des commandes en boucle */
     while (1)
     {
-        if (isatty(STDIN_FILENO))
-            write(STDOUT_FILENO, PROMPT, strlen(PROMPT));
+        write(STDOUT_FILENO, "$ ", 2); /* Affiche le prompt */
+        nread = getline(&line, &len, stdin); /* Lire la ligne entrée par l'utilisateur */
 
-        nread = getline(&line, &len, stdin);
-        if (nread == -1)
+        if (nread == -1) /* Gestion de la fin de fichier */
         {
-            if (isatty(STDIN_FILENO))
-                write(STDOUT_FILENO, "\n", 1);
-            break;
+            free(line);
+            exit(status);
         }
 
-        if (line[nread - 1] == '\n')
-            line[nread - 1] = '\0';
-
-        if (strlen(line) == 0)
-            continue;
-
-        char *args[BUFFER_SIZE];
-        size_t i = 0;
-        char *token = strtok(line, " ");
-        while (token != NULL && i < BUFFER_SIZE - 1)
-        {
-            args[i++] = token;
-            token = strtok(NULL, " ");
-        }
-        args[i] = NULL;
-
-        if (execute_builtin(args))
-            continue;
-
-        char *executable = find_executable(args[0]);
-        if (executable == NULL && access(args[0], X_OK) == 0)
-            executable = strdup(args[0]);
-
-        if (executable == NULL)
-        {
-            fprintf(stderr, "%s: command not found\n", args[0]);
-            continue;
-        }
-
-        pid = fork();
-        if (pid == -1)
-        {
-            perror("fork");
-            free(executable);
-            continue;
-        }
-
-        if (pid == 0)
-        {
-            if (execve(executable, args, environ) == -1)
-            {
-                perror(args[0]);
-                free(executable);
-                exit(EXIT_FAILURE);
-            }
-        }
-        else
-            wait(&status);
-
-        free(executable);
+        args = split_line(line); /* Divise la ligne en mots */
+        status = execute(args);   /* Exécute la commande */
+        free(args);               /* Libère la mémoire de args */
     }
 
-    free(line);
-    return (0);
+    free(line); /* Libère la mémoire de la ligne de commande */
+    return (status);
 }

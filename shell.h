@@ -1,21 +1,16 @@
-#ifndef SHELL_H
-#define SHELL_H
+#ifndef SIMPLE_SHELL_H
+#define SIMPLE_SHELL_H
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <string.h>
-#include <sys/types.h>
+#include <unistd.h>
 #include <sys/wait.h>
-#include <errno.h>
 
-#define BUFFER_SIZE 1024
-#define PROMPT "#cisfun$ "
+int execute(char **args);
+int _exit_shell(char **args);
+int _cd(char **args);
+char *find_in_path(char *cmd);
+char **split_line(char *line);
 
-extern char **environ;
-
-int execute_builtin(char **args);
-char *find_executable(char *cmd);
-void free_array(char **array);
-
-#endif /* SHELL_H */
+#endif

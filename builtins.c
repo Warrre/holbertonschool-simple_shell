@@ -1,31 +1,30 @@
-#include "shell.h"
+#include "simple_shell.h"
 
 /**
- * execute_builtin - Exécute les commandes intégrées du shell.
- * @args: Tableau d’arguments.
- *
- * Return: 1 si une commande intégrée est exécutée, 0 sinon.
+ * _exit_shell - Gère la commande exit du shell.
+ * @args: Tableau d'arguments.
+ * Return: 0 si exit, 1 sinon.
  */
-int execute_builtin(char **args)
+int _exit_shell(char **args)
 {
-    if (strcmp(args[0], "exit") == 0)
-    {
-        exit(args[1] ? atoi(args[1]) : 0);
-    }
-    else if (strcmp(args[0], "env") == 0)
-    {
-        for (char **env = environ; *env; ++env)
-            printf("%s\n", *env);
-        return 1;
-    }
-    else if (strcmp(args[0], "cd") == 0)
-    {
-        if (args[1] == NULL)
-            fprintf(stderr, "cd: missing argument\n");
-        else if (chdir(args[1]) != 0)
-            perror("cd");
-        return 1;
-    }
+    (void)args; /* Évite le warning si non utilisé */
+    exit(0);    /* Sort du shell avec un code de succès */
+}
 
-    return 0;
+/**
+ * _cd - Gère la commande cd pour changer de répertoire.
+ * @args: Tableau d'arguments.
+ * Return: 1 si succès, 0 sinon.
+ */
+int _cd(char **args)
+{
+    if (args[1] == NULL) /* Si aucun argument n'est passé, va au répertoire home */
+    {
+        chdir(getenv("HOME"));
+    }
+    else if (chdir(args[1]) != 0) /* Change de répertoire selon l'argument */
+    {
+        perror("cd");
+    }
+    return (1);
 }
