@@ -1,0 +1,4 @@
+.TH hsh 1 "Jan 2025" "Simple Shell Project" "Shell Manual"
+
+.SH NAME
+hsh \- simple UNIX command interpreter
