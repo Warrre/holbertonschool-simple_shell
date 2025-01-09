@@ -8,29 +8,31 @@
  */
 int main(int argc, char **argv)
 {
-    char *line = NULL;         /* Ligne de commande de l'utilisateur */
-    char **args = NULL;        /* Tableau des arguments */
-    size_t len = 0;            /* Taille de la ligne de commande */
-    ssize_t nread;             /* Nombre d'octets lus */
-    int status = 0;            /* Statut de la commande */
+    char *line = NULL;
+    char **args;
+    size_t len = 0;
+    ssize_t nread;
+    int status = 1;
 
-    /* Affichage du prompt et traitement des commandes en boucle */
+    (void)argc; /* Evite les warnings sur des paramètres inutilisés */
+    (void)argv;
+
     while (1)
     {
         write(STDOUT_FILENO, "$ ", 2); /* Affiche le prompt */
-        nread = getline(&line, &len, stdin); /* Lire la ligne entrée par l'utilisateur */
+        nread = getline(&line, &len, stdin); /* Lit la ligne de commande */
 
-        if (nread == -1) /* Gestion de la fin de fichier */
+        if (nread == -1) /* Si fin de fichier ou erreur de lecture */
         {
             free(line);
             exit(status);
         }
 
-        args = split_line(line); /* Divise la ligne en mots */
+        args = split_line(line); /* Divise la ligne en arguments */
         status = execute(args);   /* Exécute la commande */
-        free(args);               /* Libère la mémoire de args */
+        free_memory(args);        /* Libère la mémoire allouée pour les arguments */
     }
 
-    free(line); /* Libère la mémoire de la ligne de commande */
+    free(line); /* Libère la mémoire allouée pour la ligne de commande */
     return (status);
 }
