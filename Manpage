@@ -1,0 +1,75 @@
+.TH simple_shell 1 "January 2025" "1.0" "Simple Shell Manual"
+.SH NAME
+simple_shell \- a simple UNIX command line interpreter
+
+.SH SYNOPSIS
+.B simple_shell
+
+.SH DESCRIPTION
+.B simple_shell
+is a basic UNIX shell designed to execute commands and handle basic shell functionality. It supports interactive and non-interactive modes.
+
+.SH USAGE
+
+.TP
+.B Interactive Mode:
+Run the shell and execute commands directly.
+
+Example:
+.EXAMPLE
+$ ./hsh
+$ ls -l
+$ pwd
+$ exit
+.EE
+
+.TP
+.B Non-Interactive Mode:
+Feed commands through a pipe or from a file.
+
+Example:
+.EXAMPLE
+echo "ls -l" | ./hsh
+cat commands.txt | ./hsh
+.EE
+
+.SH FEATURES
+- Displays a prompt and waits for user input.
+- Executes commands with or without arguments.
+- Searches for commands in the user's PATH.
+- Handles built-in commands like \fBexit\fP and \fBenv\fP.
+- Supports interactive and non-interactive modes.
+- Manages errors such as "command not found."
+
+.SH BUILT-IN COMMANDS
+.TP
+.B exit
+Exits the shell.
+
+.TP
+.B env
+Displays the current environment variables.
+
+.SH EXAMPLES
+.TP
+Interactive mode example:
+.EXAMPLE
+$ ./hsh
+$ ls
+main.c shell.c shell.h
+$ env
+USER=julien
+HOME=/home/julien
+PATH=/usr/bin:/bin
+$ exit
+.EE
+
+.TP
+Non-interactive mode example:
+.EXAMPLE
+echo "ls -l" | ./hsh
+main.c shell.c shell.h
+.EE
+
+.SH SEE ALSO
+sh(1), bash(1), execve(2)

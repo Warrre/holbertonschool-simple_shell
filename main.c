@@ -1,38 +1,40 @@
-#include "simple_shell.h"
+#include "shell.h"
 
 /**
- * main - Point d'entrée du programme.
- * @argc: Nombre d'arguments passés au programme.
- * @argv: Tableau des arguments passés au programme.
- * Return: 0 si succès, 1 si erreur.
+ * main - Point d'entrée du shell.
+ * @argc: Nombre d'arguments.
+ * @argv: Tableau des arguments.
+ * @env: Tableau de l'environnement.
+ * Return: 0 en cas de succès.
  */
-int main(int argc, char **argv)
+int main(int argc, char **argv, char **env)
 {
-    char *line = NULL;
-    char **args;
-    size_t len = 0;
-    ssize_t nread;
-    int status = 1;
+	char *line = NULL, **args = NULL;
+	size_t len = 0;
+	ssize_t nread;
+	int status = 1;
 
-    (void)argc; /* Evite les warnings sur des paramètres inutilisés */
-    (void)argv;
+	(void)argc;
 
-    while (1)
-    {
-        write(STDOUT_FILENO, "$ ", 2); /* Affiche le prompt */
-        nread = getline(&line, &len, stdin); /* Lit la ligne de commande */
+	while (status)
+	{
+		if (isatty(STDIN_FILENO))
+			write(STDOUT_FILENO, "$ ", 2);
 
-        if (nread == -1) /* Si fin de fichier ou erreur de lecture */
-        {
-            free(line);
-            exit(status);
-        }
+		nread = getline(&line, &len, stdin);
+		if (nread == -1)
+		{
+			free(line);
+			exit(0);
+		}
 
-        args = split_line(line); /* Divise la ligne en arguments */
-        status = execute(args);   /* Exécute la commande */
-        free_memory(args);        /* Libère la mémoire allouée pour les arguments */
-    }
+		line[nread - 1] = '\0'; /* Supprime le saut de ligne */
+		args = parse_input(line);
+		if (args && args[0])
+			status = execute_command(args, argv[0], env);
+		free_args(args);
+	}
 
-    free(line); /* Libère la mémoire allouée pour la ligne de commande */
-    return (status);
+	free(line);
+	return (0);
 }

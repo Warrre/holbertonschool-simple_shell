@@ -1,33 +1,47 @@
-#include "simple_shell.h"
+#include "shell.h"
 
-/**
- * find_in_path - Recherche la commande dans les répertoires du PATH.
- * @cmd: Nom de la commande.
- * Return: Le chemin complet de la commande ou NULL si non trouvé.
- */
-char *find_in_path(char *cmd)
+int find_command(char *cmd, char **env)
 {
-    char *path = getenv("PATH"); /* Récupère la variable d'environnement PATH */
-    char *token = strtok(path, ":"); /* Sépare les répertoires */
-    char *full_path = NULL;
+    char *path = getenv_path(env);
+    char *full_path;
+    char *token;
+    struct stat st;
 
-    while (token != NULL)
+    if (!path || !cmd)
+        return (0);
+
+    token = strtok(path, ":");
+    while (token)
     {
-        full_path = malloc(strlen(token) + strlen(cmd) + 2); /* Allocation mémoire pour le chemin */
-        if (full_path == NULL)
-            return (NULL);
+        full_path = malloc(strlen(token) + strlen(cmd) + 2);
+        if (!full_path)
+            return (0);
 
-        strcpy(full_path, token); /* Copie le répertoire */
-        strcat(full_path, "/");    /* Ajoute un '/' pour concaténer la commande */
-        strcat(full_path, cmd);    /* Ajoute le nom de la commande */
+        sprintf(full_path, "%s/%s", token, cmd);
 
-        if (access(full_path, X_OK) == 0) /* Vérifie si la commande est exécutable */
+        if (stat(full_path, &st) == 0 && (st.st_mode & S_IXUSR))
         {
-            return (full_path);
+            free(cmd);
+            cmd = strdup(full_path);
+            free(full_path);
+            return (1);
         }
 
-        free(full_path); /* Libère la mémoire si la commande n'est pas trouvée */
-        token = strtok(NULL, ":"); /* Passe au répertoire suivant dans le PATH */
+        free(full_path);
+        token = strtok(NULL, ":");
+    }
+    return (0);
+}
+
+char *getenv_path(char **env)
+{
+    size_t i = 0;
+
+    while (env[i])
+    {
+        if (strncmp(env[i], "PATH=", 5) == 0)
+            return (env[i] + 5);
+        i++;
     }
     return (NULL);
 }
