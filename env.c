@@ -1,13 +1,17 @@
 #include "shell.h"
 
-void print_env(char **env)
+/* Afficher toutes les variables d'environnement */
+void show_environment(void)
 {
-    size_t i = 0;
-
-    while (env[i])
-    {
-        write(STDOUT_FILENO, env[i], strlen(env[i]));
-        write(STDOUT_FILENO, "\n", 1);
+    int i = 0;
+    while (environ[i] != NULL) {
+        printf("%s\n", environ[i]);
         i++;
     }
+}
+
+/* Récupérer une variable d'environnement par son nom */
+char *get_environment_variable(const char *name)
+{
+    return getenv(name);
 }
