@@ -1,40 +1,29 @@
 #include "shell.h"
 
 /**
- * main - Point d'entrée du shell.
- * @argc: Nombre d'arguments.
- * @argv: Tableau des arguments.
- * @env: Tableau de l'environnement.
- * Return: 0 en cas de succès.
+ * main - Entry point of the shell.
+ * @argc: Argument count.
+ * @argv: Argument vector.
+ *
+ * Return: Always 0.
  */
-int main(int argc, char **argv, char **env)
+int main(int argc, char **argv)
 {
-	char *line = NULL, **args = NULL;
-	size_t len = 0;
-	ssize_t nread;
-	int status = 1;
+    (void)argc;
+    (void)argv;
 
-	(void)argc;
+    signal(SIGINT, handle_signal);
+    shell_loop();
 
-	while (status)
-	{
-		if (isatty(STDIN_FILENO))
-			write(STDOUT_FILENO, "$ ", 2);
+    return (0);
+}
 
-		nread = getline(&line, &len, stdin);
-		if (nread == -1)
-		{
-			free(line);
-			exit(0);
-		}
-
-		line[nread - 1] = '\0'; /* Supprime le saut de ligne */
-		args = parse_input(line);
-		if (args && args[0])
-			status = execute_command(args, argv[0], env);
-		free_args(args);
-	}
-
-	free(line);
-	return (0);
+/**
+ * handle_signal - Handles SIGINT (Ctrl+C) signal.
+ * @sig: Signal number.
+ */
+void handle_signal(int sig)
+{
+    (void)sig;
+    write(STDOUT_FILENO, "\n$ ", 3);
 }

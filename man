@@ -1,0 +1,94 @@
+.TH SIMPLE_SHELL 1 "January 2025" "1.0" "SIMPLE_SHELL Manual"
+
+.SH NAME
+simple_shell \- A simple UNIX command-line interpreter
+
+.SH SYNOPSIS
+.B simple_shell
+
+.SH DESCRIPTION
+.B simple_shell
+is a minimalist shell program that executes commands entered by the user. It supports basic command execution, environment variable handling, and built-in commands.
+
+.SH FEATURES
+.PP
+The shell provides the following functionalities:
+.TP
+.B \- Command Execution
+Executes system commands located in the directories specified by the PATH environment variable.
+.TP
+.B \- Built-in Commands
+Supports the following built-in commands:
+.RS
+.IP
+\fBexit\fP \- Exit the shell.
+.IP
+\fBenv\fP \- Display the current environment variables.
+.RE
+.TP
+.B \- PATH Handling
+Resolves commands using the PATH environment variable.
+.TP
+.B \- Signal Handling
+Handles signals such as SIGINT (Ctrl+C) gracefully.
+.TP
+.B \- Interactive and Non-Interactive Modes
+Works in both interactive (with prompt) and non-interactive (script-based) modes.
+
+.SH USAGE
+.B simple_shell
+.PP
+In interactive mode:
+.IP
+\fB$ ./simple_shell\fP
+.br
+#cisfun$ \fBcommand\fP
+.br
+#cisfun$ \fBexit\fP
+
+.PP
+In non-interactive mode:
+.IP
+\fB$ echo "command" | ./simple_shell\fP
+
+.SH EXAMPLES
+.TP
+.B Interactive Mode
+.IP
+\fB$ ./simple_shell\fP
+.br
+#cisfun$ \fBls\fP
+.br
+file1  file2  simple_shell
+.br
+#cisfun$ \fBexit\fP
+
+.TP
+.B Non-Interactive Mode
+.IP
+\fB$ echo "ls" | ./simple_shell\fP
+.br
+file1  file2  simple_shell
+
+.SH FILES
+.TP
+.B shell.h
+Header file with function prototypes and macros.
+.TP
+.B main.c
+Entry point of the shell.
+.TP
+.B parser.c
+Tokenizes and processes user input.
+.TP
+.B executor.c
+Executes commands and handles built-ins.
+.TP
+.B utils.c
+Helper functions for string manipulation and other utilities.
+.TP
+.B env.c
+Handles environment variable operations.
+
+.SH AUTHORS
+Warren Gomes Martins

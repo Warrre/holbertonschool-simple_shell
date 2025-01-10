@@ -1,74 +1,81 @@
-# Simple Shell
+# simple_shell
 
-## Description
-This project is a simple UNIX command line interpreter that replicates the basic functionality of a shell. It supports executing commands, handling errors, and interacting with the environment.
+A simple UNIX command-line interpreter 
+
+## Overview
+
+`simple_shell` is a minimalist shell program designed to execute basic commands, process arguments, and handle the PATH environment. This project serves as an introduction to system-level programming in C.
 
 ## Features
-- Display a prompt and wait for user input.
-- Execute commands from the user input.
-- Handle commands with or without arguments.
-- Search for commands in the `PATH`.
-- Handle built-in commands like `exit` and `env`.
-- Manage errors gracefully (e.g., command not found).
-- Support both interactive and non-interactive modes.
 
-## Requirements
-- The program is compiled with:
-  ```bash
-  gcc -Wall -Werror -Wextra -pedantic -std=gnu89 *.c -o hsh
-  ```
-- The shell should behave exactly like `/bin/sh` for most operations.
+- Executes system commands using `execve`.
+- Handles PATH resolution for commands.
+- Built-in commands:
+  - `exit`: Exit the shell.
+  - `env`: Print the current environment variables.
+- Displays a custom prompt.
+- Handles end-of-file (Ctrl+D) and signals (e.g., Ctrl+C).
+- Works in both interactive and non-interactive modes.
 
 ## Usage
-### Interactive Mode
-Run the shell and use commands directly:
+
+To compile the shell, use:
+
 ```bash
-./hsh
-$ ls
-$ pwd
-$ exit
+gcc -Wall -Werror -Wextra -pedantic *.c -o simple_shell
 ```
 
-### Non-Interactive Mode
-Feed commands via a pipe or a file:
+To run the shell interactively:
+
 ```bash
-echo "ls -l" | ./hsh
-cat commands.txt | ./hsh
+./simple_shell
 ```
 
-## Allowed Functions and System Calls
-The following functions and system calls are used in this project:
-- `access`, `chdir`, `close`, `closedir`, `execve`, `exit`, `_exit`, `fflush`, `fork`, `free`, `getcwd`, `getline`, `getpid`, `isatty`, `kill`, `malloc`, `open`, `opendir`, `perror`, `read`, `readdir`, `signal`, `stat`, `lstat`, `fstat`, `strtok`, `wait`, `waitpid`, `wait3`, `wait4`, `write`.
+To run a command file non-interactively:
 
-## File Structure
-| File        | Description                                           |
-|-------------|-------------------------------------------------------|
-| `main.c`    | Entry point of the shell program.                     |
-| `shell.c`   | Core shell functions like command execution.          |
-| `parser.c`  | Functions to parse and tokenize user input.           |
-| `path.c`    | Functions to handle command searching in `PATH`.      |
-| `env.c`     | Built-in function to print the environment variables. |
-| `utils.c`   | Helper functions like freeing memory.                 |
-| `shell.h`   | Header file containing prototypes and macros.         |
-
-## Example Output
-### Interactive Mode:
 ```bash
-$ ./hsh
-$ /bin/ls
-main.c shell.c shell.h
-$ env
-USER=julien
-HOME=/home/julien
-PATH=/usr/bin:/bin
-$ exit
+echo "command" | ./simple_shell
 ```
 
-### Non-Interactive Mode:
+## Examples
+
+Interactive mode:
+
 ```bash
-echo "ls" | ./hsh
-main.c shell.c shell.h
+$ ./simple_shell
+#cisfun$ ls
+file1  file2  simple_shell
+#cisfun$ env
+USER=gomes
+HOME=/home/warren
+...
+#cisfun$ exit
 ```
 
-## Authors
--warren Gomes Martins-
+Non-interactive mode:
+
+```bash
+echo "ls" | ./simple_shell
+file1  file2  simple_shell
+```
+
+## Installation
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/warren-gomes/simple_shell.git
+```
+
+2. Navigate to the project directory and compile:
+
+```bash
+cd simple_shell
+make
+```
+
+3. Run the shell:
+
+```bash
+./simple_shell
+```
